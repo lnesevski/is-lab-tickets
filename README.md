@@ -1,1 +1,2 @@
-# is-lab-tickets
+# Integrated Systems - Lab 01
+## Movie Tickets App
