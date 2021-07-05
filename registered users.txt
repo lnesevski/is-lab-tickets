@@ -1,0 +1,3 @@
+StandardUser: test@test.com	Password1!
+
+Administrator: adminislab@ultramailinator.com Password1!

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MovieTickets.Domain.DomainModels.Order>
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>My Orders</h1>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Number of Tickets
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.TicketsInOrders.Count()
+            </td>
+            <td>
+                <a class="btn btn-outline-secondary" asp-action="GenerateFaktura" asp-route-id="@item.Id">Download PDF</a>
+                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

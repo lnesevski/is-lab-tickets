@@ -1,0 +1,65 @@
+﻿@model MovieTickets.Domain.DomainModels.UserTickets
+@using Microsoft.Extensions.Options 
+@inject IOptions<MovieTickets.Domain.StripeSettings> Stripe
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@{var totalPrice = 0.0f;}
+
+@if (Model.TicketsInUserTickets.Count > 0)
+{
+
+    <h2 class="h2">My Tickets</h2>
+
+
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Movie</th>
+                <th>Starts When</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.TicketsInUserTickets)
+            {
+                <tr>
+                    <td>@item.Ticket.MovieName</td>
+                    <td>@item.Ticket.TicketTimeStamp</td>
+                    <td>@item.Ticket.TicketPrice</td>
+                    @{totalPrice += item.Ticket.TicketPrice;}
+                    <td><a class="btn btn-outline-danger" href="UserTickets/DeleteTicketFromUsertickets?TicketId=@item.Ticket.Id">Remove</a></td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="thead-dark">
+            <tr>
+                <th>Total Price</th>
+                <th></th>
+                <th>@totalPrice</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+    <form asp-controller="Orders" asp-action="PayOrder" method="post">
+        <article>
+            <script src="https://checkout.stripe.com/checkout.js"
+                    class="stripe-button"
+                    data-key="@Stripe.Value.PublishableKey"
+                    data-locale="auto"
+                    data-description="EShop Application Payment"
+                    data-amount="@(totalPrice * 100)"
+                    data-label="Pay $@totalPrice">
+            </script>
+        </article>
+    </form>
+}
+else
+{
+    <h4 class="h4">You don't have any tickets added.</h4>
+}

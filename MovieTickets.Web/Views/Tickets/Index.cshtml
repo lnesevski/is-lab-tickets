@@ -1,0 +1,87 @@
+﻿@using MovieTickets.Domain.DomainModels.Genre
+@using MovieTickets.Domain.Identity
+@inject Microsoft.AspNetCore.Identity.SignInManager<MoviesUser> SignInManager
+@model IEnumerable<MovieTickets.Domain.DomainModels.Ticket>
+
+
+@{
+    ViewData["Title"] = "Index";
+    bool isAdmin = SignInManager.IsSignedIn(User) && User.IsInRole("Administrator");
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#selekt").change(function () {
+            var value = $("#selekt option:selected").attr("value");
+            $("#buttonn").attr("href", "Tickets?genre=" + value);
+        });
+
+        $("#selekt").change(function () {
+            var value = $("#selekt option:selected").attr("value");
+            $("#exportBtn").attr("href", "Tickets/ExportTickets?genre=" + value);
+        });
+
+    });
+</script>
+
+<h1>Tickets Available</h1>
+<form>
+    <select id="selekt">
+        <option value="-1" selected>All Tickets</option>
+        @foreach (int i in Enum.GetValues(typeof(GENRE)))
+        {
+            <option value="@i">@Enum.GetName(typeof(GENRE), i)</option>
+        }
+    </select>
+    <a id="buttonn" class="btn btn-outline-dark" href="Tickets?genre=-1">Filter Movies</a>
+</form>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TicketTimeStamp)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Movie.MovieName
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketTimeStamp)
+                </td>
+                <td>
+
+                    <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-outline-success" asp-action="AddTicket" asp-route-id="@item.Id">Get Ticket</a>
+                    @if (isAdmin)
+                    {
+                        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (isAdmin)
+{
+<a id="exportBtn" class="btn btn-primary" href="Tickets/ExportTickets?genre=-1">Export Tickets</a>
+}
